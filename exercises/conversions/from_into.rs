@@ -40,35 +40,38 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
-        let mut words = s.split(",");
-        if words.clone().count() < 1 {
+        if s.is_empty() {
             return Person::default();
-        } else if words.clone().count() > 2 {
-            return Person::default();
-        } else {
-            let mut person = Person::default();
-            // let (Some(name), Some(age)) = (words.next(), words.next());
-            // if !name.is_empty() {
-            //     person.name = name.into();
-            // }
-            if let Some(name) = words.next() {
-                if !name.is_empty() {
-                    person.name = name.into();
-                }
-            }
-            if let Some(age) = words.next() {
-                if !age.is_empty() {
-                    if age.chars().all(|c| c.is_digit(10)) {
-                        person.age = age.parse::<usize>().expect("Reason");
-                    }
-                }
-            }
-            return person;
         };
+        
+        let mut words = s.split(",");
+        if words.clone().count() > 2 {
+            return Person::default();
+        };
+        
+        let mut person = Person::default();
+        if let Some(name) = words.next() {
+            if name.is_empty() {
+                return Person::default();
+            } else { 
+                person.name = name.into();
+            };
+        } else {
+            return Person::default();
+        };
+        if let Some(age) = words.next() {
+            if let Ok(p_age) = age.parse::<usize>() {
+                person.age = p_age;
+            } else {
+                return Person::default();
+            }
+        } else {
+            return Person::default();
+        };
+        return person;
     }
 }
 

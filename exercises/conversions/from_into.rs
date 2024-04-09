@@ -44,6 +44,31 @@ impl Default for Person {
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        let mut words = s.split(",");
+        if words.clone().count() < 1 {
+            return Person::default();
+        } else if words.clone().count() > 2 {
+            return Person::default();
+        } else {
+            let mut person = Person::default();
+            // let (Some(name), Some(age)) = (words.next(), words.next());
+            // if !name.is_empty() {
+            //     person.name = name.into();
+            // }
+            if let Some(name) = words.next() {
+                if !name.is_empty() {
+                    person.name = name.into();
+                }
+            }
+            if let Some(age) = words.next() {
+                if !age.is_empty() {
+                    if age.chars().all(|c| c.is_digit(10)) {
+                        person.age = age.parse::<usize>().expect("Reason");
+                    }
+                }
+            }
+            return person;
+        };
     }
 }
 

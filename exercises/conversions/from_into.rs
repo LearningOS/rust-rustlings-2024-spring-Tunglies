@@ -42,36 +42,28 @@ impl Default for Person {
 
 
 impl From<&str> for Person {
-    fn from(s: &str) -> Person {
-        if s.is_empty() {
-            return Person::default();
-        };
-        
+    fn from(s: &str) -> Person {        
         let mut words = s.split(",");
         if words.clone().count() > 2 {
             return Person::default();
         };
-        
-        let mut person = Person::default();
-        if let Some(name) = words.next() {
-            if name.is_empty() {
+
+        if let ((Some(name), Some(age))) = (words.next(), words.next()) {
+            if name.is_empty() || age.is_empty() {
                 return Person::default();
-            } else { 
-                person.name = name.into();
             };
-        } else {
+
+            if let Ok(page) = age.parse::<usize>() {
+                let mut person = Person::default();
+                person.name = name.into();
+                person.age = page;
+                return person;
+            };
+
             return Person::default();
         };
-        if let Some(age) = words.next() {
-            if let Ok(p_age) = age.parse::<usize>() {
-                person.age = p_age;
-            } else {
-                return Person::default();
-            }
-        } else {
-            return Person::default();
-        };
-        return person;
+        
+        return Person::default();
     }
 }
 

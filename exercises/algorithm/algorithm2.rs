@@ -2,11 +2,9 @@
 	double linked list reverse
 	This problem requires you to reverse a doubly linked list
 */
-// I AM NOT DONE
 
-use std::fmt::{self, Display, Formatter};
+use std::fmt::{self, Debug, Display, Formatter};
 use std::ptr::NonNull;
-use std::vec::*;
 
 #[derive(Debug)]
 struct Node<T> {
@@ -31,13 +29,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: Clone + Debug> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: Clone + Debug> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -72,8 +70,39 @@ impl<T> LinkedList<T> {
             },
         }
     }
+
+    fn get_ptr_value(&mut self, ptr: Option<NonNull<Node<T>>>) {
+        match ptr {
+            Some(value) => {
+                unsafe {
+                    let v = &(*value.as_ptr()).val;
+                    self.add(v.clone());
+                }
+            },
+            _ => ()
+        }
+    }
+
+    fn get_prev_ptr(&self, ptr: Option<NonNull<Node<T>>>) -> Option<NonNull<Node<T>>> {
+        match ptr {
+            Some(prev) => {
+                unsafe {
+                    (*prev.as_ptr()).prev
+                }
+            },
+            _ => None
+        }
+    }
+
+
 	pub fn reverse(&mut self){
-		// TODO
+        self.start = self.end;
+        let mut prev = self.get_prev_ptr(self.end);
+        while let Some(_p) = prev {
+            self.get_ptr_value(prev);
+            prev = self.get_prev_ptr(prev);
+        }
+
 	}
 }
 

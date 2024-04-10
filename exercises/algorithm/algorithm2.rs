@@ -102,8 +102,8 @@ impl<T: Clone + Debug> LinkedList<T> {
             self.get_ptr_value(prev);
             prev = self.get_prev_ptr(prev);
         }
-
 	}
+    
 }
 
 impl<T> Display for LinkedList<T>

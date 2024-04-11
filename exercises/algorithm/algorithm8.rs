@@ -4,8 +4,6 @@
 */
 // I AM NOT DONE
 
-use std::fmt::Debug;
-
 #[derive(Debug)]
 pub struct Queue<T> {
     elements: Vec<T>,
@@ -31,7 +29,8 @@ impl<T> Queue<T> {
     }
 
     pub fn peek(&self) -> Result<&T, &str> {
-        match self.elements.first() {
+        // match self.elements.first() {
+        match self.elements.last() {
             Some(value) => Ok(value),
             None => Err("Queue is empty"),
         }
@@ -60,8 +59,7 @@ pub struct myStack<T>
 	q1:Queue<T>,
 	q2:Queue<T>
 }
-impl<T> myStack<T>
-{
+impl<T> myStack<T> {
     pub fn new() -> Self {
         Self {
 			//TODO
@@ -70,23 +68,18 @@ impl<T> myStack<T>
         }
     }
     pub fn push(&mut self, elem: T) {
-        println!("Push");
-        self.q2.enqueue(elem);
-        if let Ok(dequeued) = self.q1.dequeue() {
-            self.q2.enqueue(dequeued);
-        }
+        //TODO
     }
     pub fn pop(&mut self) -> Result<T, &str> {
         //TODO
 		if self.is_empty() {
             return Err("Stack is empty");
         }
-
-        return Ok(self.q1.dequeue()?);
-
+        return self.q1
     }
     pub fn is_empty(&self) -> bool {
-		self.q1.is_empty()
+		//TODO
+        self.q1.is_empty()
     }
 }
 

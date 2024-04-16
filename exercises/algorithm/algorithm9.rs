@@ -2,7 +2,6 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -94,7 +93,7 @@ where
         if !(self.comparator)(&self.items[idx], &self.items[parent_idx]) {
             return;
         }
-        
+
         self.items.swap(idx, parent_idx);
         self.heapify_up(parent_idx);
     }

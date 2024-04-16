@@ -9,7 +9,7 @@ use std::default::Default;
 
 pub struct Heap<T>
 where
-    T: Default,
+    T: Default + Ord + Copy + std::marker::Copy,
 {
     count: usize,
     items: Vec<T>,
@@ -18,7 +18,7 @@ where
 
 impl<T> Heap<T>
 where
-    T: Default,
+    T: Default + std::cmp::Ord + std::marker::Copy,
 {
     pub fn new(comparator: fn(&T, &T) -> bool) -> Self {
         Self {
@@ -37,7 +37,10 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        println!("Push Value");
+        self.items.push(value);
+        self.count += 1;
+        self.heapify_up(self.len());
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,14 +60,51 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        let left = self.left_child_idx(idx);
+        let right = self.right_child_idx(idx);
+        if right > self.count {
+            left
+        } else if (self.comparator)(&self.items[left], &self.items[right]) {
+            left
+        } else {
+            right
+        }
     }
+
+    fn heapify_down(&mut self, mut idx: usize) {
+        if !self.children_present(idx) {
+            return;
+        }
+
+        let smallest_child_idx = self.smallest_child_idx(idx);
+        if !(self.comparator)(&self.items[smallest_child_idx], &self.items[idx]) {
+            return;
+        }
+        
+        self.items.swap(smallest_child_idx, idx);
+        self.heapify_down(idx);
+    }
+
+    fn heapify_up(&mut self, idx: usize) {
+        if !(idx > 1) {
+            return;
+        }
+
+        let parent_idx = self.parent_idx(idx);
+        if !(self.comparator)(&self.items[idx], &self.items[parent_idx]) {
+            return;
+        }
+        
+        self.items.swap(idx, parent_idx);
+        self.heapify_up(parent_idx);
+    }
+    
+
 }
 
 impl<T> Heap<T>
 where
-    T: Default + Ord,
+    T: Default + Ord + Copy,
 {
     /// Create a new MinHeap
     pub fn new_min() -> Self {
@@ -79,13 +119,17 @@ where
 
 impl<T> Iterator for Heap<T>
 where
-    T: Default,
+    T: Default + std::cmp::Ord + Copy,
 {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.len() == 0 { return None; }
+
+        let out = self.items.swap_remove(1);
+        self.count -= 1;
+        self.heapify_down(1);
+        Some(out)
     }
 }
 
@@ -95,7 +139,7 @@ impl MinHeap {
     #[allow(clippy::new_ret_no_self)]
     pub fn new<T>() -> Heap<T>
     where
-        T: Default + Ord,
+        T: Default + Ord + std::marker::Copy,
     {
         Heap::new(|a, b| a < b)
     }
@@ -107,7 +151,7 @@ impl MaxHeap {
     #[allow(clippy::new_ret_no_self)]
     pub fn new<T>() -> Heap<T>
     where
-        T: Default + Ord,
+        T: Default + Ord + std::marker::Copy,
     {
         Heap::new(|a, b| a > b)
     }
